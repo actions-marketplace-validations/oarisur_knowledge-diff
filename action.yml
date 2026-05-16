@@ -1,0 +1,74 @@
+name: "Knowledge Diff"
+description: "Detect rationale drift between code changes and project documentation. Comments on PRs when code changes contradict your docs."
+author: "Knowledge Diff Contributors"
+
+branding:
+  icon: "book-open"
+  color: "purple"
+
+inputs:
+  github-token:
+    description: "GitHub token for posting comments and reading PR data."
+    required: true
+
+  openai-api-key:
+    description: "OpenAI API key. Required if llm-provider is 'openai' (the default)."
+    required: false
+    default: ""
+
+  anthropic-api-key:
+    description: "Anthropic API key. Required if llm-provider is 'anthropic'."
+    required: false
+    default: ""
+
+  llm-provider:
+    description: "LLM provider to use for drift detection. Options: 'openai', 'anthropic'."
+    required: false
+    default: "openai"
+
+  llm-model:
+    description: "Override the default model. Defaults: openai→gpt-4o, anthropic→claude-3-5-sonnet-20241022."
+    required: false
+    default: ""
+
+  doc-files:
+    description: "Comma-separated glob patterns of documentation files to check against."
+    required: false
+    default: "README.md,ARCHITECTURE.md,CLAUDE.md,docs/**/*.md"
+
+  code-extensions:
+    description: "Comma-separated list of file extensions to treat as code."
+    required: false
+    default: "ts,tsx,js,jsx,py,go,rs,java,cpp,c,rb,php,swift,kt"
+
+  sensitivity:
+    description: "How aggressively to flag drift. Options: 'low' (only clear contradictions), 'medium', 'high' (also flags ambiguities)."
+    required: false
+    default: "medium"
+
+  auto-patch:
+    description: "If true, open a follow-up PR with suggested documentation updates when drift is detected."
+    required: false
+    default: "false"
+
+  comment-mode:
+    description: "How to post comments. 'update' edits the existing comment on each push; 'new' always posts a fresh comment."
+    required: false
+    default: "update"
+
+  max-files-per-run:
+    description: "Maximum number of changed code files to analyse per PR run (to control LLM costs)."
+    required: false
+    default: "20"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
+
+outputs:
+  drift-detected:
+    description: "'true' if at least one drift issue was found above the sensitivity threshold, 'false' otherwise."
+  drift-count:
+    description: "Number of drift issues detected."
+  patch-pr-url:
+    description: "URL of the auto-generated documentation patch PR. Empty string if auto-patch is disabled or no patchable drift was found."

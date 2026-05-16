@@ -1,0 +1,21 @@
+node_modules/
+
+# Build output is committed for GitHub Actions, but ignore intermediate artifacts
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+
+# Environment
+.env
+.env.local
