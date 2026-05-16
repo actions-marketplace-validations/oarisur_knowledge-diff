@@ -1,6 +1,6 @@
 name: "Knowledge Diff"
 description: "Detect rationale drift between code changes and project documentation. Comments on PRs when code changes contradict your docs."
-author: "Knowledge Diff Contributors"
+author: "Oarisur Rahman (@oarisur)"
 
 branding:
   icon: "book-open"

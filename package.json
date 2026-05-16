@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "GitHub Action that detects rationale drift between code changes and project documentation.",
   "main": "dist/index.js",
+  "author": "Oarisur Rahman (@oarisur)",
   "scripts": {
     "build": "ncc build src/index.ts -o dist --source-map --license licenses.txt",
     "build:watch": "tsc --watch",
