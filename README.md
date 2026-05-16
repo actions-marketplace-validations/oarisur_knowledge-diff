@@ -65,7 +65,7 @@ jobs:
   check-rationale-drift:
     runs-on: ubuntu-latest
     steps:
-      - uses: knowledge-diff/knowledge-diff@v1
+      - uses: oarisur/knowledge-diff@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
@@ -106,7 +106,7 @@ jobs:
 ### Fail the check on definite drift
 
 ```yaml
-- uses: knowledge-diff/knowledge-diff@v1
+- uses: oarisur/knowledge-diff@v1
   id: drift
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -123,7 +123,7 @@ jobs:
 ### Use Anthropic Claude instead of OpenAI
 
 ```yaml
-- uses: knowledge-diff/knowledge-diff@v1
+- uses: oarisur/knowledge-diff@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -133,7 +133,7 @@ jobs:
 ### Enable auto-patch (opens a doc-fix PR automatically)
 
 ```yaml
-- uses: knowledge-diff/knowledge-diff@v1
+- uses: oarisur/knowledge-diff@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     openai-api-key: ${{ secrets.OPENAI_API_KEY }}
@@ -145,7 +145,7 @@ When drift is detected, a second PR like `docs/knowledge-diff-42-a1b2c3d` is ope
 ### Check only specific docs
 
 ```yaml
-- uses: knowledge-diff/knowledge-diff@v1
+- uses: oarisur/knowledge-diff@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     openai-api-key: ${{ secrets.OPENAI_API_KEY }}
@@ -228,7 +228,7 @@ Set `max-files-per-run: 10` and `sensitivity: low` to minimise cost on large PRs
 ## Local Development
 
 ```bash
-git clone https://github.com/knowledge-diff/knowledge-diff
+git clone https://github.com/oarisur/knowledge-diff
 cd knowledge-diff
 npm install
 npm run build       # bundles to dist/index.js via ncc

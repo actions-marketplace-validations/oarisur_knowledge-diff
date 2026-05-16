@@ -5,7 +5,7 @@ Thanks for considering a contribution! Here's how to get started.
 ## Development Setup
 
 ```bash
-git clone https://github.com/knowledge-diff/knowledge-diff
+git clone https://github.com/oarisur/knowledge-diff
 cd knowledge-diff
 npm install
 ```
