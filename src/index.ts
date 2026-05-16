@@ -14,19 +14,25 @@ import { DocPatcher } from "./doc-patcher";
 
 function parseInputs(): ActionInputs {
   const llmProvider = core.getInput("llm-provider") as LLMProvider;
-  if (!["openai", "anthropic"].includes(llmProvider)) {
-    throw new Error(`Invalid llm-provider: "${llmProvider}". Must be "openai" or "anthropic".`);
+  if (!["openai", "anthropic", "gemini"].includes(llmProvider)) {
+    throw new Error(`Invalid llm-provider: "${llmProvider}". Must be "openai", "anthropic", or "gemini".`);
   }
 
   const apiKey =
     llmProvider === "openai"
       ? core.getInput("openai-api-key")
-      : core.getInput("anthropic-api-key");
+      : llmProvider === "anthropic"
+      ? core.getInput("anthropic-api-key")
+      : core.getInput("gemini-api-key");
 
   if (!apiKey) {
     throw new Error(
       `API key for "${llmProvider}" is required. Set the "${
-        llmProvider === "openai" ? "openai-api-key" : "anthropic-api-key"
+        llmProvider === "openai"
+          ? "openai-api-key"
+          : llmProvider === "anthropic"
+          ? "anthropic-api-key"
+          : "gemini-api-key"
       }" input.`
     );
   }

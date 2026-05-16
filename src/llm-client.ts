@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 import * as core from "@actions/core";
 import type { LLMProvider, LLMDriftResponse } from "./types";
 
@@ -56,6 +57,7 @@ export async function withRetry<T>(
 const DEFAULT_MODELS: Record<LLMProvider, string> = {
   openai: "gpt-4o",
   anthropic: "claude-3-5-sonnet-20241022",
+  gemini: "gemini-2.5-flash",
 };
 
 // ─── System Prompt ────────────────────────────────────────────────────────────
@@ -125,6 +127,7 @@ export class LLMClient {
   private model: string;
   private openaiClient?: OpenAI;
   private anthropicClient?: Anthropic;
+  private geminiClient?: GoogleGenAI;
 
   constructor(provider: LLMProvider, apiKey: string, modelOverride?: string) {
     this.provider = provider;
@@ -132,8 +135,10 @@ export class LLMClient {
 
     if (provider === "openai") {
       this.openaiClient = new OpenAI({ apiKey });
-    } else {
+    } else if (provider === "anthropic") {
       this.anthropicClient = new Anthropic({ apiKey });
+    } else if (provider === "gemini") {
+      this.geminiClient = new GoogleGenAI({ apiKey });
     }
 
     core.info(`LLM client: ${provider} / ${this.model}`);
@@ -164,10 +169,15 @@ export class LLMClient {
           () => this.callOpenAI(userPrompt),
           `openai:${codeFilePath}`
         );
-      } else {
+      } else if (this.provider === "anthropic") {
         rawResponse = await withRetry(
           () => this.callAnthropic(userPrompt),
           `anthropic:${codeFilePath}`
+        );
+      } else {
+        rawResponse = await withRetry(
+          () => this.callGemini(userPrompt),
+          `gemini:${codeFilePath}`
         );
       }
     } catch (err) {
@@ -215,6 +225,21 @@ export class LLMClient {
     if (block.type !== "text") return "{}";
     // Prepend the opening brace from the assistant prefill to form valid JSON
     return "{" + block.text;
+  }
+
+  private async callGemini(userPrompt: string): Promise<string> {
+    const response = await this.geminiClient!.models.generateContent({
+      model: this.model,
+      contents: userPrompt,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.1,
+        maxOutputTokens: 512,
+        responseMimeType: "application/json",
+      },
+    });
+
+    return response.text ?? "{}";
   }
 
   private parseResponse(raw: string): LLMDriftResponse {

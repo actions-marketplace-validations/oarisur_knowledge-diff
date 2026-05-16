@@ -1,6 +1,6 @@
 // ─── Action Configuration ────────────────────────────────────────────────────
 
-export type LLMProvider = "openai" | "anthropic";
+export type LLMProvider = "openai" | "anthropic" | "gemini";
 export type Sensitivity = "low" | "medium" | "high";
 export type CommentMode = "update" | "new";
 

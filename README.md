@@ -82,8 +82,9 @@ jobs:
 | `github-token` | ✅ | — | GitHub token for posting comments. Use `secrets.GITHUB_TOKEN`. |
 | `openai-api-key` | ✅* | — | OpenAI API key. Required when `llm-provider` is `openai`. |
 | `anthropic-api-key` | ✅* | — | Anthropic API key. Required when `llm-provider` is `anthropic`. |
-| `llm-provider` | ❌ | `openai` | LLM backend: `openai` or `anthropic`. |
-| `llm-model` | ❌ | `gpt-4o` / `claude-3-5-sonnet-20241022` | Override the model. |
+| `gemini-api-key` | ✅* | — | Google Gemini API key. Required when `llm-provider` is `gemini`. |
+| `llm-provider` | ❌ | `openai` | LLM backend: `openai`, `anthropic`, or `gemini`. |
+| `llm-model` | ❌ | `gpt-4o` / `claude-3-5-sonnet-20241022` / `gemini-2.5-flash` | Override the model. |
 | `doc-files` | ❌ | `README.md,ARCHITECTURE.md,CLAUDE.md,docs/**/*.md` | Comma-separated globs of docs to check. |
 | `code-extensions` | ❌ | `ts,tsx,js,jsx,py,go,rs,java,cpp,c,rb,php,swift,kt` | File extensions treated as code. |
 | `sensitivity` | ❌ | `medium` | Drift threshold: `low` (definite only) / `medium` / `high` (includes ambiguities). |
@@ -128,6 +129,16 @@ jobs:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
     llm-provider: anthropic
+```
+
+### Use Google Gemini
+
+```yaml
+- uses: oarisur/knowledge-diff@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+    llm-provider: gemini
 ```
 
 ### Enable auto-patch (opens a doc-fix PR automatically)

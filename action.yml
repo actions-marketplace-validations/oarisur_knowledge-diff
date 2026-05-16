@@ -21,13 +21,18 @@ inputs:
     required: false
     default: ""
 
+  gemini-api-key:
+    description: "Google Gemini API key. Required if llm-provider is 'gemini'."
+    required: false
+    default: ""
+
   llm-provider:
-    description: "LLM provider to use for drift detection. Options: 'openai', 'anthropic'."
+    description: "LLM provider to use for drift detection. Options: 'openai', 'anthropic', 'gemini'."
     required: false
     default: "openai"
 
   llm-model:
-    description: "Override the default model. Defaults: openai→gpt-4o, anthropic→claude-3-5-sonnet-20241022."
+    description: "Override the default model. Defaults: openai→gpt-4o, anthropic→claude-3-5-sonnet-20241022, gemini→gemini-2.5-flash."
     required: false
     default: ""
 

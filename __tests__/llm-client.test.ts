@@ -48,6 +48,17 @@ jest.mock("@anthropic-ai/sdk", () => {
   return MockAnthropic;
 });
 
+jest.mock("@google/genai", () => {
+  const mockGenerateContent = jest.fn();
+  return {
+    GoogleGenAI: jest.fn().mockImplementation(() => ({
+      models: {
+        generateContent: mockGenerateContent,
+      },
+    })),
+  };
+});
+
 // ─── buildDriftPrompt ─────────────────────────────────────────────────────────
 
 describe("buildDriftPrompt", () => {
@@ -194,6 +205,11 @@ describe("LLMClient", () => {
     expect(client).toBeDefined();
   });
 
+  it("creates a Gemini client when provider is gemini", () => {
+    const client = new LLMClient("gemini", "test-key");
+    expect(client).toBeDefined();
+  });
+
   it("uses custom model when modelOverride is provided", () => {
     const client = new LLMClient("openai", "test-key", "gpt-4o-mini");
     expect(client).toBeDefined();
@@ -267,6 +283,35 @@ describe("LLMClient", () => {
 
       expect(result.isDrift).toBe(false);
       expect(result.confidence).toBe("possible");
+    });
+
+    it("handles valid JSON drift response from Gemini", async () => {
+      const { GoogleGenAI } = require("@google/genai");
+      const mockGenerateContent = jest.fn().mockResolvedValue({
+        text: JSON.stringify({
+          isDrift: true,
+          confidence: "definite",
+          explanation: "Gemini explains drift",
+        }),
+      });
+
+      GoogleGenAI.mockImplementation(() => ({
+        models: { generateContent: mockGenerateContent },
+      }));
+
+      const client = new LLMClient("gemini", "test-key");
+      const result = await client.detectDrift(
+        "file.ts",
+        "patch",
+        "doc.md",
+        "Section",
+        "content",
+        "medium"
+      );
+
+      expect(result.isDrift).toBe(true);
+      expect(result.confidence).toBe("definite");
+      expect(result.explanation).toContain("Gemini explains");
     });
 
     it("returns safe defaults on unparseable response", async () => {
