@@ -89,6 +89,9 @@ function createMockOctokit() {
         updateRef: jest.fn().mockResolvedValue({}),
       },
       pulls: {
+        list: jest.fn().mockResolvedValue({
+          data: [],
+        }),
         create: jest.fn().mockResolvedValue({
           data: {
             number: 99,
@@ -280,6 +283,31 @@ describe("DocPatcher", () => {
       expect(patchPR).not.toBeNull();
       // Two different files = two blobs
       expect(octokit.rest.git.createBlob).toHaveBeenCalledTimes(2);
+    });
+
+    it("reuses an existing open PR and does not call pulls.create", async () => {
+      const octokit = createMockOctokit();
+      const existingPR = {
+        number: 101,
+        html_url: "https://github.com/test-owner/test-repo/pull/101",
+      };
+      (octokit.rest.pulls.list as jest.Mock).mockResolvedValue({
+        data: [existingPR],
+      });
+      const patcher = new DocPatcher(octokit, CTX);
+
+      const docContent = "We use Redux Toolkit for all global state.";
+      const result = makeAnalysisResult({
+        driftResults: [makeDriftResult()],
+      });
+      const docContents = new Map([["README.md", docContent]]);
+
+      const patchPR = await patcher.createPatchPR(result, docContents);
+
+      expect(patchPR).not.toBeNull();
+      expect(patchPR!.patchPRNumber).toBe(101);
+      expect(patchPR!.patchPRUrl).toBe(existingPR.html_url);
+      expect(octokit.rest.pulls.create).not.toHaveBeenCalled();
     });
   });
 

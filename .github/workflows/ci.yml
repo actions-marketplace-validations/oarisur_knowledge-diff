@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: 20
           cache: npm
@@ -48,5 +48,4 @@ jobs:
           fi
 
       - name: Security audit
-        run: npm audit --audit-level=high
-        continue-on-error: true  # warn but don't block on transitive deps
+        run: npm audit --audit-level=high --omit=dev

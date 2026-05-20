@@ -37,6 +37,9 @@ function parseInputs(): ActionInputs {
     );
   }
 
+  // Mask the key so it's redacted if it ever appears in logs
+  core.setSecret(apiKey);
+
   const sensitivity = core.getInput("sensitivity") as ActionInputs["sensitivity"];
   if (!["low", "medium", "high"].includes(sensitivity)) {
     throw new Error(`Invalid sensitivity: "${sensitivity}". Must be "low", "medium", or "high".`);
@@ -47,12 +50,14 @@ function parseInputs(): ActionInputs {
     throw new Error(`Invalid comment-mode: "${commentMode}". Must be "update" or "new".`);
   }
 
-  const maxFilesPerRun = parseInt(core.getInput("max-files-per-run") || "20", 10);
-  if (isNaN(maxFilesPerRun) || maxFilesPerRun < 1) {
+  const MAX_FILES_ABSOLUTE_LIMIT = 100;
+  const maxFilesRaw = parseInt(core.getInput("max-files-per-run") || "20", 10);
+  if (isNaN(maxFilesRaw) || maxFilesRaw < 1) {
     throw new Error(
       `Invalid max-files-per-run: "${core.getInput("max-files-per-run")}". Must be a positive integer.`
     );
   }
+  const maxFilesPerRun = Math.min(maxFilesRaw, MAX_FILES_ABSOLUTE_LIMIT);
 
   return {
     githubToken: core.getInput("github-token", { required: true }),

@@ -183,8 +183,27 @@ export class DocPatcher {
         });
       }
 
-      // 7. Open PR
+      // 7. Open PR (or reuse existing one from a previous run)
       const filesList = patches.map((p) => `- \`${p.filePath}\``).join("\n");
+
+      // Check if a patch PR from this branch is already open to avoid duplicates
+      const { data: existingPRs } = await this.octokit.rest.pulls.list({
+        owner: this.ctx.owner,
+        repo: this.ctx.repo,
+        head: `${this.ctx.owner}:${patchBranch}`,
+        state: "open",
+      });
+
+      if (existingPRs.length > 0) {
+        const existing = existingPRs[0];
+        core.info(`Patch PR already exists: ${existing.html_url} — branch updated.`);
+        return {
+          patchBranch,
+          patchPRNumber: existing.number,
+          patchPRUrl: existing.html_url,
+        };
+      }
+
       const { data: pr } = await this.octokit.rest.pulls.create({
         owner: this.ctx.owner,
         repo: this.ctx.repo,
