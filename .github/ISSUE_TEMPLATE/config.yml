@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: "💬 Q&A & Support"
-    url: "https://github.com/oarisur/knowledge-diff/discussions/categories/q-a"
-    about: "Ask questions, get help, or share how you are using knowledge-diff."
-  - name: "🛡️ Security Vulnerabilities"
-    url: "https://github.com/oarisur/knowledge-diff/security/policy"
-    about: "Please report security vulnerabilities privately according to our security policy."
