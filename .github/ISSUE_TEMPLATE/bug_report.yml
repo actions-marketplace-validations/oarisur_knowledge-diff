@@ -1,0 +1,61 @@
+name: "🐛 Bug Report"
+description: "Report a bug or unexpected behavior in knowledge-diff"
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Thank you for reporting a bug!
+        Please fill out this form as completely as possible to help us investigate and resolve the issue quickly.
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description of the Bug"
+      description: "A clear and concise description of what the bug is."
+      placeholder: "When running the action, it fails with..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to Reproduce"
+      description: "How can we reproduce the behavior? Please include sample YAML configuration or code/doc examples if possible."
+      placeholder: |
+        1. Set up the action with configuration...
+        2. Run the workflow on a pull request with...
+        3. See error output...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected Behavior"
+      description: "A clear and concise description of what you expected to happen."
+      placeholder: "The action should analyze the files and succeed with no drift detected."
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: "LLM Provider"
+      description: "Which LLM provider were you using?"
+      options:
+        - "gemini (Google)"
+        - "openai (OpenAI)"
+        - "anthropic (Anthropic)"
+        - "Other / Local"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Workflow Logs / CLI Output"
+      description: "Please paste any relevant logs from the GitHub Actions runner. Redact any secrets or sensitive repository names."
+      render: shell
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment Details"
+      description: "Action version, Node.js version, OS (if running locally), etc."
+      placeholder: "knowledge-diff v1.0.0, Node 20, runner ubuntu-latest"
