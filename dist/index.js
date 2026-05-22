@@ -90406,6 +90406,26 @@ function videoFromVertex$1(fromObject) {
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+/** Outcome of the code execution. */
+var Outcome;
+(function (Outcome) {
+    /**
+     * Unspecified status. This value should not be used.
+     */
+    Outcome["OUTCOME_UNSPECIFIED"] = "OUTCOME_UNSPECIFIED";
+    /**
+     * Code execution completed successfully. `output` contains the stdout, if any.
+     */
+    Outcome["OUTCOME_OK"] = "OUTCOME_OK";
+    /**
+     * Code execution failed. `output` contains the stderr and stdout, if any.
+     */
+    Outcome["OUTCOME_FAILED"] = "OUTCOME_FAILED";
+    /**
+     * Code execution ran for too long, and was cancelled. There may or may not be a partial `output` present.
+     */
+    Outcome["OUTCOME_DEADLINE_EXCEEDED"] = "OUTCOME_DEADLINE_EXCEEDED";
+})(Outcome || (Outcome = {}));
 /** Programming language of the `code`. */
 var Language;
 (function (Language) {
@@ -90418,26 +90438,6 @@ var Language;
      */
     Language["PYTHON"] = "PYTHON";
 })(Language || (Language = {}));
-/** Outcome of the code execution. */
-var Outcome;
-(function (Outcome) {
-    /**
-     * Unspecified status. This value should not be used.
-     */
-    Outcome["OUTCOME_UNSPECIFIED"] = "OUTCOME_UNSPECIFIED";
-    /**
-     * Code execution completed successfully.
-     */
-    Outcome["OUTCOME_OK"] = "OUTCOME_OK";
-    /**
-     * Code execution finished but with a failure. `stderr` should contain the reason.
-     */
-    Outcome["OUTCOME_FAILED"] = "OUTCOME_FAILED";
-    /**
-     * Code execution ran for too long, and was cancelled. There may or may not be a partial output present.
-     */
-    Outcome["OUTCOME_DEADLINE_EXCEEDED"] = "OUTCOME_DEADLINE_EXCEEDED";
-})(Outcome || (Outcome = {}));
 /** Specifies how the response should be scheduled in the conversation. */
 var FunctionResponseScheduling;
 (function (FunctionResponseScheduling) {
@@ -90505,6 +90505,14 @@ var Environment;
      * Operates in a web browser.
      */
     Environment["ENVIRONMENT_BROWSER"] = "ENVIRONMENT_BROWSER";
+    /**
+     * Operates in a mobile environment.
+     */
+    Environment["ENVIRONMENT_MOBILE"] = "ENVIRONMENT_MOBILE";
+    /**
+     * Operates in a desktop environment.
+     */
+    Environment["ENVIRONMENT_DESKTOP"] = "ENVIRONMENT_DESKTOP";
 })(Environment || (Environment = {}));
 /** Type of auth scheme. This enum is not supported in Gemini API. */
 var AuthType;
@@ -91290,7 +91298,23 @@ var PairwiseChoice;
      */
     PairwiseChoice["TIE"] = "TIE";
 })(PairwiseChoice || (PairwiseChoice = {}));
-/** The tuning task. Either I2V or T2V. This enum is not supported in Gemini API. */
+/** The speed of the tuning job. Only supported for Veo 3.0 models. This enum is not supported in Gemini API. */
+var TuningSpeed;
+(function (TuningSpeed) {
+    /**
+     * The default / unset value. For Veo 3.0 models, this defaults to FAST.
+     */
+    TuningSpeed["TUNING_SPEED_UNSPECIFIED"] = "TUNING_SPEED_UNSPECIFIED";
+    /**
+     * Regular tuning speed.
+     */
+    TuningSpeed["REGULAR"] = "REGULAR";
+    /**
+     * Fast tuning speed.
+     */
+    TuningSpeed["FAST"] = "FAST";
+})(TuningSpeed || (TuningSpeed = {}));
+/** The tuning task for Veo. This enum is not supported in Gemini API. */
 var TuningTask;
 (function (TuningTask) {
     /**
@@ -91310,6 +91334,22 @@ var TuningTask;
      */
     TuningTask["TUNING_TASK_R2V"] = "TUNING_TASK_R2V";
 })(TuningTask || (TuningTask = {}));
+/** The orientation of the video. Defaults to LANDSCAPE. This enum is not supported in Gemini API. */
+var VideoOrientation;
+(function (VideoOrientation) {
+    /**
+     * Unspecified video orientation. Defaults to landscape.
+     */
+    VideoOrientation["VIDEO_ORIENTATION_UNSPECIFIED"] = "VIDEO_ORIENTATION_UNSPECIFIED";
+    /**
+     * Landscape orientation (e.g. 16:9, 1280x720).
+     */
+    VideoOrientation["LANDSCAPE"] = "LANDSCAPE";
+    /**
+     * Portrait orientation (e.g. 9:16, 720x1280).
+     */
+    VideoOrientation["PORTRAIT"] = "PORTRAIT";
+})(VideoOrientation || (VideoOrientation = {}));
 /** Output only. Current state of the `Document`. This enum is not supported in Vertex AI. */
 var DocumentState;
 (function (DocumentState) {
@@ -95650,6 +95690,39 @@ function blobToMldev$3(fromObject) {
     }
     return toObject;
 }
+function codeExecutionResultToVertex$2(fromObject) {
+    const toObject = {};
+    const fromOutcome = getValueByPath(fromObject, ['outcome']);
+    if (fromOutcome != null) {
+        setValueByPath(toObject, ['outcome'], fromOutcome);
+    }
+    const fromOutput = getValueByPath(fromObject, ['output']);
+    if (fromOutput != null) {
+        setValueByPath(toObject, ['output'], fromOutput);
+    }
+    if (getValueByPath(fromObject, ['id']) !== undefined) {
+        throw new Error('id parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
+    }
+    return toObject;
+}
+function computerUseToVertex$2(fromObject) {
+    const toObject = {};
+    const fromEnvironment = getValueByPath(fromObject, ['environment']);
+    if (fromEnvironment != null) {
+        setValueByPath(toObject, ['environment'], fromEnvironment);
+    }
+    const fromExcludedPredefinedFunctions = getValueByPath(fromObject, [
+        'excludedPredefinedFunctions',
+    ]);
+    if (fromExcludedPredefinedFunctions != null) {
+        setValueByPath(toObject, ['excludedPredefinedFunctions'], fromExcludedPredefinedFunctions);
+    }
+    if (getValueByPath(fromObject, ['enablePromptInjectionDetection']) !==
+        undefined) {
+        throw new Error('enablePromptInjectionDetection parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
+    }
+    return toObject;
+}
 function contentToMldev$3(fromObject) {
     const toObject = {};
     const fromParts = getValueByPath(fromObject, ['parts']);
@@ -95842,6 +95915,21 @@ function deleteCachedContentResponseFromVertex(fromObject) {
     ]);
     if (fromSdkHttpResponse != null) {
         setValueByPath(toObject, ['sdkHttpResponse'], fromSdkHttpResponse);
+    }
+    return toObject;
+}
+function executableCodeToVertex$2(fromObject) {
+    const toObject = {};
+    const fromCode = getValueByPath(fromObject, ['code']);
+    if (fromCode != null) {
+        setValueByPath(toObject, ['code'], fromCode);
+    }
+    const fromLanguage = getValueByPath(fromObject, ['language']);
+    if (fromLanguage != null) {
+        setValueByPath(toObject, ['language'], fromLanguage);
+    }
+    if (getValueByPath(fromObject, ['id']) !== undefined) {
+        throw new Error('id parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
     }
     return toObject;
 }
@@ -96128,13 +96216,13 @@ function partToVertex$2(fromObject) {
         'codeExecutionResult',
     ]);
     if (fromCodeExecutionResult != null) {
-        setValueByPath(toObject, ['codeExecutionResult'], fromCodeExecutionResult);
+        setValueByPath(toObject, ['codeExecutionResult'], codeExecutionResultToVertex$2(fromCodeExecutionResult));
     }
     const fromExecutableCode = getValueByPath(fromObject, [
         'executableCode',
     ]);
     if (fromExecutableCode != null) {
-        setValueByPath(toObject, ['executableCode'], fromExecutableCode);
+        setValueByPath(toObject, ['executableCode'], executableCodeToVertex$2(fromExecutableCode));
     }
     const fromFileData = getValueByPath(fromObject, ['fileData']);
     if (fromFileData != null) {
@@ -96300,7 +96388,7 @@ function toolToVertex$2(fromObject) {
     }
     const fromComputerUse = getValueByPath(fromObject, ['computerUse']);
     if (fromComputerUse != null) {
-        setValueByPath(toObject, ['computerUse'], fromComputerUse);
+        setValueByPath(toObject, ['computerUse'], computerUseToVertex$2(fromComputerUse));
     }
     if (getValueByPath(fromObject, ['fileSearch']) !== undefined) {
         throw new Error('fileSearch parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
@@ -97692,6 +97780,39 @@ function blobToMldev$2(fromObject) {
     }
     return toObject;
 }
+function codeExecutionResultToVertex$1(fromObject) {
+    const toObject = {};
+    const fromOutcome = getValueByPath(fromObject, ['outcome']);
+    if (fromOutcome != null) {
+        setValueByPath(toObject, ['outcome'], fromOutcome);
+    }
+    const fromOutput = getValueByPath(fromObject, ['output']);
+    if (fromOutput != null) {
+        setValueByPath(toObject, ['output'], fromOutput);
+    }
+    if (getValueByPath(fromObject, ['id']) !== undefined) {
+        throw new Error('id parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
+    }
+    return toObject;
+}
+function computerUseToVertex$1(fromObject) {
+    const toObject = {};
+    const fromEnvironment = getValueByPath(fromObject, ['environment']);
+    if (fromEnvironment != null) {
+        setValueByPath(toObject, ['environment'], fromEnvironment);
+    }
+    const fromExcludedPredefinedFunctions = getValueByPath(fromObject, [
+        'excludedPredefinedFunctions',
+    ]);
+    if (fromExcludedPredefinedFunctions != null) {
+        setValueByPath(toObject, ['excludedPredefinedFunctions'], fromExcludedPredefinedFunctions);
+    }
+    if (getValueByPath(fromObject, ['enablePromptInjectionDetection']) !==
+        undefined) {
+        throw new Error('enablePromptInjectionDetection parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
+    }
+    return toObject;
+}
 function contentToMldev$2(fromObject) {
     const toObject = {};
     const fromParts = getValueByPath(fromObject, ['parts']);
@@ -97725,6 +97846,21 @@ function contentToVertex$1(fromObject) {
     const fromRole = getValueByPath(fromObject, ['role']);
     if (fromRole != null) {
         setValueByPath(toObject, ['role'], fromRole);
+    }
+    return toObject;
+}
+function executableCodeToVertex$1(fromObject) {
+    const toObject = {};
+    const fromCode = getValueByPath(fromObject, ['code']);
+    if (fromCode != null) {
+        setValueByPath(toObject, ['code'], fromCode);
+    }
+    const fromLanguage = getValueByPath(fromObject, ['language']);
+    if (fromLanguage != null) {
+        setValueByPath(toObject, ['language'], fromLanguage);
+    }
+    if (getValueByPath(fromObject, ['id']) !== undefined) {
+        throw new Error('id parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
     }
     return toObject;
 }
@@ -98467,13 +98603,13 @@ function partToVertex$1(fromObject) {
         'codeExecutionResult',
     ]);
     if (fromCodeExecutionResult != null) {
-        setValueByPath(toObject, ['codeExecutionResult'], fromCodeExecutionResult);
+        setValueByPath(toObject, ['codeExecutionResult'], codeExecutionResultToVertex$1(fromCodeExecutionResult));
     }
     const fromExecutableCode = getValueByPath(fromObject, [
         'executableCode',
     ]);
     if (fromExecutableCode != null) {
-        setValueByPath(toObject, ['executableCode'], fromExecutableCode);
+        setValueByPath(toObject, ['executableCode'], executableCodeToVertex$1(fromExecutableCode));
     }
     const fromFileData = getValueByPath(fromObject, ['fileData']);
     if (fromFileData != null) {
@@ -98625,7 +98761,7 @@ function toolToVertex$1(fromObject) {
     }
     const fromComputerUse = getValueByPath(fromObject, ['computerUse']);
     if (fromComputerUse != null) {
-        setValueByPath(toObject, ['computerUse'], fromComputerUse);
+        setValueByPath(toObject, ['computerUse'], computerUseToVertex$1(fromComputerUse));
     }
     if (getValueByPath(fromObject, ['fileSearch']) !== undefined) {
         throw new Error('fileSearch parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
@@ -98905,6 +99041,21 @@ function citationMetadataFromMldev(fromObject, _rootObject) {
     }
     return toObject;
 }
+function codeExecutionResultToVertex(fromObject, _rootObject) {
+    const toObject = {};
+    const fromOutcome = getValueByPath(fromObject, ['outcome']);
+    if (fromOutcome != null) {
+        setValueByPath(toObject, ['outcome'], fromOutcome);
+    }
+    const fromOutput = getValueByPath(fromObject, ['output']);
+    if (fromOutput != null) {
+        setValueByPath(toObject, ['output'], fromOutput);
+    }
+    if (getValueByPath(fromObject, ['id']) !== undefined) {
+        throw new Error('id parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
+    }
+    return toObject;
+}
 function computeTokensParametersToVertex(apiClient, fromObject, rootObject) {
     const toObject = {};
     const fromModel = getValueByPath(fromObject, ['model']);
@@ -98940,6 +99091,24 @@ function computeTokensResponseFromVertex(fromObject, _rootObject) {
             });
         }
         setValueByPath(toObject, ['tokensInfo'], transformedList);
+    }
+    return toObject;
+}
+function computerUseToVertex(fromObject, _rootObject) {
+    const toObject = {};
+    const fromEnvironment = getValueByPath(fromObject, ['environment']);
+    if (fromEnvironment != null) {
+        setValueByPath(toObject, ['environment'], fromEnvironment);
+    }
+    const fromExcludedPredefinedFunctions = getValueByPath(fromObject, [
+        'excludedPredefinedFunctions',
+    ]);
+    if (fromExcludedPredefinedFunctions != null) {
+        setValueByPath(toObject, ['excludedPredefinedFunctions'], fromExcludedPredefinedFunctions);
+    }
+    if (getValueByPath(fromObject, ['enablePromptInjectionDetection']) !==
+        undefined) {
+        throw new Error('enablePromptInjectionDetection parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
     }
     return toObject;
 }
@@ -99614,6 +99783,21 @@ function endpointFromVertex(fromObject, _rootObject) {
     ]);
     if (fromDeployedModelId != null) {
         setValueByPath(toObject, ['deployedModelId'], fromDeployedModelId);
+    }
+    return toObject;
+}
+function executableCodeToVertex(fromObject, _rootObject) {
+    const toObject = {};
+    const fromCode = getValueByPath(fromObject, ['code']);
+    if (fromCode != null) {
+        setValueByPath(toObject, ['code'], fromCode);
+    }
+    const fromLanguage = getValueByPath(fromObject, ['language']);
+    if (fromLanguage != null) {
+        setValueByPath(toObject, ['language'], fromLanguage);
+    }
+    if (getValueByPath(fromObject, ['id']) !== undefined) {
+        throw new Error('id parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
     }
     return toObject;
 }
@@ -101495,7 +101679,7 @@ function partToMldev$1(fromObject, rootObject) {
     }
     return toObject;
 }
-function partToVertex(fromObject, _rootObject) {
+function partToVertex(fromObject, rootObject) {
     const toObject = {};
     const fromMediaResolution = getValueByPath(fromObject, [
         'mediaResolution',
@@ -101507,13 +101691,13 @@ function partToVertex(fromObject, _rootObject) {
         'codeExecutionResult',
     ]);
     if (fromCodeExecutionResult != null) {
-        setValueByPath(toObject, ['codeExecutionResult'], fromCodeExecutionResult);
+        setValueByPath(toObject, ['codeExecutionResult'], codeExecutionResultToVertex(fromCodeExecutionResult));
     }
     const fromExecutableCode = getValueByPath(fromObject, [
         'executableCode',
     ]);
     if (fromExecutableCode != null) {
-        setValueByPath(toObject, ['executableCode'], fromExecutableCode);
+        setValueByPath(toObject, ['executableCode'], executableCodeToVertex(fromExecutableCode));
     }
     const fromFileData = getValueByPath(fromObject, ['fileData']);
     if (fromFileData != null) {
@@ -101988,7 +102172,7 @@ function toolToMldev$1(fromObject, rootObject) {
     }
     return toObject;
 }
-function toolToVertex(fromObject, _rootObject) {
+function toolToVertex(fromObject, rootObject) {
     const toObject = {};
     const fromRetrieval = getValueByPath(fromObject, ['retrieval']);
     if (fromRetrieval != null) {
@@ -101996,7 +102180,7 @@ function toolToVertex(fromObject, _rootObject) {
     }
     const fromComputerUse = getValueByPath(fromObject, ['computerUse']);
     if (fromComputerUse != null) {
-        setValueByPath(toObject, ['computerUse'], fromComputerUse);
+        setValueByPath(toObject, ['computerUse'], computerUseToVertex(fromComputerUse));
     }
     if (getValueByPath(fromObject, ['fileSearch']) !== undefined) {
         throw new Error('fileSearch parameter is only supported in Gemini Developer API mode, not in Gemini Enterprise Agent Platform mode.');
@@ -102613,7 +102797,7 @@ const CONTENT_TYPE_HEADER = 'Content-Type';
 const SERVER_TIMEOUT_HEADER = 'X-Server-Timeout';
 const USER_AGENT_HEADER = 'User-Agent';
 const GOOGLE_API_CLIENT_HEADER = 'x-goog-api-client';
-const SDK_VERSION = '2.4.0'; // x-release-please-version
+const SDK_VERSION = '2.6.0'; // x-release-please-version
 const LIBRARY_LABEL = `google-genai-sdk/${SDK_VERSION}`;
 const VERTEX_AI_API_DEFAULT_VERSION = 'v1beta1';
 const GOOGLE_AI_API_DEFAULT_VERSION = 'v1beta';
@@ -110017,6 +110201,250 @@ function createTuningJobParametersPrivateToVertex(fromObject, rootObject) {
     }
     return toObject;
 }
+function distillationHyperParametersFromVertex(fromObject, rootObject) {
+    const toObject = {};
+    const fromAdapterSize = getValueByPath(fromObject, ['adapterSize']);
+    if (fromAdapterSize != null) {
+        setValueByPath(toObject, ['adapterSize'], fromAdapterSize);
+    }
+    const fromEpochCount = getValueByPath(fromObject, ['epochCount']);
+    if (fromEpochCount != null) {
+        setValueByPath(toObject, ['epochCount'], fromEpochCount);
+    }
+    const fromLearningRateMultiplier = getValueByPath(fromObject, [
+        'learningRateMultiplier',
+    ]);
+    if (fromLearningRateMultiplier != null) {
+        setValueByPath(toObject, ['learningRateMultiplier'], fromLearningRateMultiplier);
+    }
+    const fromGenerationConfig = getValueByPath(fromObject, [
+        'generationConfig',
+    ]);
+    if (fromGenerationConfig != null) {
+        setValueByPath(toObject, ['generationConfig'], generationConfigFromVertex(fromGenerationConfig));
+    }
+    const fromLearningRate = getValueByPath(fromObject, ['learningRate']);
+    if (fromLearningRate != null) {
+        setValueByPath(toObject, ['learningRate'], fromLearningRate);
+    }
+    const fromBatchSize = getValueByPath(fromObject, ['batchSize']);
+    if (fromBatchSize != null) {
+        setValueByPath(toObject, ['batchSize'], fromBatchSize);
+    }
+    return toObject;
+}
+function distillationSamplingSpecFromVertex(fromObject, rootObject) {
+    const toObject = {};
+    const fromBaseTeacherModel = getValueByPath(fromObject, [
+        'baseTeacherModel',
+    ]);
+    if (fromBaseTeacherModel != null) {
+        setValueByPath(toObject, ['baseTeacherModel'], fromBaseTeacherModel);
+    }
+    const fromTunedTeacherModelSource = getValueByPath(fromObject, [
+        'tunedTeacherModelSource',
+    ]);
+    if (fromTunedTeacherModelSource != null) {
+        setValueByPath(toObject, ['tunedTeacherModelSource'], fromTunedTeacherModelSource);
+    }
+    const fromValidationDatasetUri = getValueByPath(fromObject, [
+        'validationDatasetUri',
+    ]);
+    if (fromValidationDatasetUri != null) {
+        setValueByPath(toObject, ['validationDatasetUri'], fromValidationDatasetUri);
+    }
+    const fromPromptDatasetUri = getValueByPath(fromObject, [
+        'promptDatasetUri',
+    ]);
+    if (fromPromptDatasetUri != null) {
+        setValueByPath(toObject, ['promptDatasetUri'], fromPromptDatasetUri);
+    }
+    const fromHyperparameters = getValueByPath(fromObject, [
+        'hyperparameters',
+    ]);
+    if (fromHyperparameters != null) {
+        setValueByPath(toObject, ['hyperparameters'], distillationHyperParametersFromVertex(fromHyperparameters));
+    }
+    return toObject;
+}
+function distillationSpecFromVertex(fromObject, rootObject) {
+    const toObject = {};
+    const fromPromptDatasetUri = getValueByPath(fromObject, [
+        'promptDatasetUri',
+    ]);
+    if (fromPromptDatasetUri != null) {
+        setValueByPath(toObject, ['promptDatasetUri'], fromPromptDatasetUri);
+    }
+    const fromBaseTeacherModel = getValueByPath(fromObject, [
+        'baseTeacherModel',
+    ]);
+    if (fromBaseTeacherModel != null) {
+        setValueByPath(toObject, ['baseTeacherModel'], fromBaseTeacherModel);
+    }
+    const fromHyperParameters = getValueByPath(fromObject, [
+        'hyperParameters',
+    ]);
+    if (fromHyperParameters != null) {
+        setValueByPath(toObject, ['hyperParameters'], distillationHyperParametersFromVertex(fromHyperParameters));
+    }
+    const fromPipelineRootDirectory = getValueByPath(fromObject, [
+        'pipelineRootDirectory',
+    ]);
+    if (fromPipelineRootDirectory != null) {
+        setValueByPath(toObject, ['pipelineRootDirectory'], fromPipelineRootDirectory);
+    }
+    const fromStudentModel = getValueByPath(fromObject, ['studentModel']);
+    if (fromStudentModel != null) {
+        setValueByPath(toObject, ['studentModel'], fromStudentModel);
+    }
+    const fromTrainingDatasetUri = getValueByPath(fromObject, [
+        'trainingDatasetUri',
+    ]);
+    if (fromTrainingDatasetUri != null) {
+        setValueByPath(toObject, ['trainingDatasetUri'], fromTrainingDatasetUri);
+    }
+    const fromTunedTeacherModelSource = getValueByPath(fromObject, [
+        'tunedTeacherModelSource',
+    ]);
+    if (fromTunedTeacherModelSource != null) {
+        setValueByPath(toObject, ['tunedTeacherModelSource'], fromTunedTeacherModelSource);
+    }
+    const fromValidationDatasetUri = getValueByPath(fromObject, [
+        'validationDatasetUri',
+    ]);
+    if (fromValidationDatasetUri != null) {
+        setValueByPath(toObject, ['validationDatasetUri'], fromValidationDatasetUri);
+    }
+    const fromTuningMode = getValueByPath(fromObject, ['tuningMode']);
+    if (fromTuningMode != null) {
+        setValueByPath(toObject, ['tuningMode'], fromTuningMode);
+    }
+    return toObject;
+}
+function generationConfigFromVertex(fromObject, _rootObject) {
+    const toObject = {};
+    const fromModelSelectionConfig = getValueByPath(fromObject, [
+        'modelConfig',
+    ]);
+    if (fromModelSelectionConfig != null) {
+        setValueByPath(toObject, ['modelSelectionConfig'], fromModelSelectionConfig);
+    }
+    const fromResponseJsonSchema = getValueByPath(fromObject, [
+        'responseJsonSchema',
+    ]);
+    if (fromResponseJsonSchema != null) {
+        setValueByPath(toObject, ['responseJsonSchema'], fromResponseJsonSchema);
+    }
+    const fromAudioTimestamp = getValueByPath(fromObject, [
+        'audioTimestamp',
+    ]);
+    if (fromAudioTimestamp != null) {
+        setValueByPath(toObject, ['audioTimestamp'], fromAudioTimestamp);
+    }
+    const fromCandidateCount = getValueByPath(fromObject, [
+        'candidateCount',
+    ]);
+    if (fromCandidateCount != null) {
+        setValueByPath(toObject, ['candidateCount'], fromCandidateCount);
+    }
+    const fromEnableAffectiveDialog = getValueByPath(fromObject, [
+        'enableAffectiveDialog',
+    ]);
+    if (fromEnableAffectiveDialog != null) {
+        setValueByPath(toObject, ['enableAffectiveDialog'], fromEnableAffectiveDialog);
+    }
+    const fromFrequencyPenalty = getValueByPath(fromObject, [
+        'frequencyPenalty',
+    ]);
+    if (fromFrequencyPenalty != null) {
+        setValueByPath(toObject, ['frequencyPenalty'], fromFrequencyPenalty);
+    }
+    const fromLogprobs = getValueByPath(fromObject, ['logprobs']);
+    if (fromLogprobs != null) {
+        setValueByPath(toObject, ['logprobs'], fromLogprobs);
+    }
+    const fromMaxOutputTokens = getValueByPath(fromObject, [
+        'maxOutputTokens',
+    ]);
+    if (fromMaxOutputTokens != null) {
+        setValueByPath(toObject, ['maxOutputTokens'], fromMaxOutputTokens);
+    }
+    const fromMediaResolution = getValueByPath(fromObject, [
+        'mediaResolution',
+    ]);
+    if (fromMediaResolution != null) {
+        setValueByPath(toObject, ['mediaResolution'], fromMediaResolution);
+    }
+    const fromPresencePenalty = getValueByPath(fromObject, [
+        'presencePenalty',
+    ]);
+    if (fromPresencePenalty != null) {
+        setValueByPath(toObject, ['presencePenalty'], fromPresencePenalty);
+    }
+    const fromResponseLogprobs = getValueByPath(fromObject, [
+        'responseLogprobs',
+    ]);
+    if (fromResponseLogprobs != null) {
+        setValueByPath(toObject, ['responseLogprobs'], fromResponseLogprobs);
+    }
+    const fromResponseMimeType = getValueByPath(fromObject, [
+        'responseMimeType',
+    ]);
+    if (fromResponseMimeType != null) {
+        setValueByPath(toObject, ['responseMimeType'], fromResponseMimeType);
+    }
+    const fromResponseModalities = getValueByPath(fromObject, [
+        'responseModalities',
+    ]);
+    if (fromResponseModalities != null) {
+        setValueByPath(toObject, ['responseModalities'], fromResponseModalities);
+    }
+    const fromResponseSchema = getValueByPath(fromObject, [
+        'responseSchema',
+    ]);
+    if (fromResponseSchema != null) {
+        setValueByPath(toObject, ['responseSchema'], fromResponseSchema);
+    }
+    const fromRoutingConfig = getValueByPath(fromObject, [
+        'routingConfig',
+    ]);
+    if (fromRoutingConfig != null) {
+        setValueByPath(toObject, ['routingConfig'], fromRoutingConfig);
+    }
+    const fromSeed = getValueByPath(fromObject, ['seed']);
+    if (fromSeed != null) {
+        setValueByPath(toObject, ['seed'], fromSeed);
+    }
+    const fromSpeechConfig = getValueByPath(fromObject, ['speechConfig']);
+    if (fromSpeechConfig != null) {
+        setValueByPath(toObject, ['speechConfig'], fromSpeechConfig);
+    }
+    const fromStopSequences = getValueByPath(fromObject, [
+        'stopSequences',
+    ]);
+    if (fromStopSequences != null) {
+        setValueByPath(toObject, ['stopSequences'], fromStopSequences);
+    }
+    const fromTemperature = getValueByPath(fromObject, ['temperature']);
+    if (fromTemperature != null) {
+        setValueByPath(toObject, ['temperature'], fromTemperature);
+    }
+    const fromThinkingConfig = getValueByPath(fromObject, [
+        'thinkingConfig',
+    ]);
+    if (fromThinkingConfig != null) {
+        setValueByPath(toObject, ['thinkingConfig'], fromThinkingConfig);
+    }
+    const fromTopK = getValueByPath(fromObject, ['topK']);
+    if (fromTopK != null) {
+        setValueByPath(toObject, ['topK'], fromTopK);
+    }
+    const fromTopP = getValueByPath(fromObject, ['topP']);
+    if (fromTopP != null) {
+        setValueByPath(toObject, ['topP'], fromTopP);
+    }
+    return toObject;
+}
 function getTuningJobParametersToMldev(fromObject, _rootObject) {
     const toObject = {};
     const fromName = getValueByPath(fromObject, ['name']);
@@ -110230,7 +110658,7 @@ function tuningJobFromMldev(fromObject, rootObject) {
     }
     return toObject;
 }
-function tuningJobFromVertex(fromObject, _rootObject) {
+function tuningJobFromVertex(fromObject, rootObject) {
     const toObject = {};
     const fromSdkHttpResponse = getValueByPath(fromObject, [
         'sdkHttpResponse',
@@ -110300,7 +110728,7 @@ function tuningJobFromVertex(fromObject, _rootObject) {
         'distillationSpec',
     ]);
     if (fromDistillationSpec != null) {
-        setValueByPath(toObject, ['distillationSpec'], fromDistillationSpec);
+        setValueByPath(toObject, ['distillationSpec'], distillationSpecFromVertex(fromDistillationSpec));
     }
     const fromTuningDataStats = getValueByPath(fromObject, [
         'tuningDataStats',
@@ -110384,17 +110812,23 @@ function tuningJobFromVertex(fromObject, _rootObject) {
     if (fromVeoTuningSpec != null) {
         setValueByPath(toObject, ['veoTuningSpec'], fromVeoTuningSpec);
     }
-    const fromDistillationSamplingSpec = getValueByPath(fromObject, [
-        'distillationSamplingSpec',
-    ]);
-    if (fromDistillationSamplingSpec != null) {
-        setValueByPath(toObject, ['distillationSamplingSpec'], fromDistillationSamplingSpec);
-    }
     const fromTuningJobMetadata = getValueByPath(fromObject, [
         'tuningJobMetadata',
     ]);
     if (fromTuningJobMetadata != null) {
         setValueByPath(toObject, ['tuningJobMetadata'], fromTuningJobMetadata);
+    }
+    const fromVeoLoraTuningSpec = getValueByPath(fromObject, [
+        'veoLoraTuningSpec',
+    ]);
+    if (fromVeoLoraTuningSpec != null) {
+        setValueByPath(toObject, ['veoLoraTuningSpec'], fromVeoLoraTuningSpec);
+    }
+    const fromDistillationSamplingSpec = getValueByPath(fromObject, [
+        'distillationSamplingSpec',
+    ]);
+    if (fromDistillationSamplingSpec != null) {
+        setValueByPath(toObject, ['distillationSamplingSpec'], distillationSamplingSpecFromVertex(fromDistillationSamplingSpec));
     }
     return toObject;
 }
