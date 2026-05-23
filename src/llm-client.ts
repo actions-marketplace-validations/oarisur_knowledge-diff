@@ -248,11 +248,12 @@ export class LLMClient {
 
   private parseResponse(raw: string): LLMDriftResponse {
     try {
-      // Strip any accidental markdown code fences
-      const cleaned = raw
-        .replace(/^```(?:json)?\s*/i, "")
-        .replace(/\s*```$/, "")
-        .trim();
+      let cleaned = raw;
+      const jsonStart = cleaned.indexOf('{');
+      const jsonEnd = cleaned.lastIndexOf('}');
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd >= jsonStart) {
+        cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+      }
       const parsed = JSON.parse(cleaned) as Partial<LLMDriftResponse>;
 
       // Validate confidence against known enum values to prevent

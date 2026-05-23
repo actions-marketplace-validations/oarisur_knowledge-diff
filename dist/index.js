@@ -111982,11 +111982,12 @@ class LLMClient {
     }
     parseResponse(raw) {
         try {
-            // Strip any accidental markdown code fences
-            const cleaned = raw
-                .replace(/^```(?:json)?\s*/i, "")
-                .replace(/\s*```$/, "")
-                .trim();
+            let cleaned = raw;
+            const jsonStart = cleaned.indexOf('{');
+            const jsonEnd = cleaned.lastIndexOf('}');
+            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd >= jsonStart) {
+                cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+            }
             const parsed = JSON.parse(cleaned);
             // Validate confidence against known enum values to prevent
             // unknown values from silently passing all sensitivity filters
