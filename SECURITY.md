@@ -13,9 +13,8 @@ If you discover a security vulnerability in Knowledge Diff, **please report it r
 ### How to Report
 
 1. **Do NOT open a public GitHub issue.** Security vulnerabilities should be reported privately.
-2. **GitHub Private Vulnerability Reporting (Preferred):** Go to the [Security tab](../../security) of this repository on GitHub and click **"Report a vulnerability"** to submit a private report directly to the maintainer.
-3. **Alternative Email:** If you prefer not to use GitHub, you can send a detailed report to [oarisur@gmail.com](mailto:oarisur@gmail.com) with the subject line `[SECURITY] Knowledge Diff`.
-4. **Include:**
+2. **GitHub Private Vulnerability Reporting:** Go to the [Security tab](../../security) of this repository on GitHub and click **"Report a vulnerability"** to submit a private report directly to the maintainer.
+3. **Include:**
    - A description of the vulnerability
    - Steps to reproduce
    - Potential impact
